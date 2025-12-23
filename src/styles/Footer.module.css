@@ -1,0 +1,137 @@
+/* Fondo con degradado sutil + top border acento */
+.footer {
+  background: linear-gradient(180deg, var(--color-secondary) 0%, #1f2f39 100%);
+  color: #ffffff;
+  border-top: 4px solid var(--color-primary);
+  margin-top: 3rem;
+}
+
+.top {
+  padding: 3rem 0 2.25rem;
+}
+
+/* ===================== Marca / Logo ===================== */
+.brand { max-width: 520px; }
+
+/* Tarjeta “glass” del logo, con borde degradado + glow sutil */
+.logoCard {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .75rem 1rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 8px 24px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  position: relative;
+  isolation: isolate;
+  margin-bottom: .85rem;
+}
+.logoCard::after {
+  /* aurora/glow muy tenue para levantar el logo */
+  content: "";
+  position: absolute;
+  inset: -6px -12px -6px -12px;
+  background: radial-gradient(120px 40px at 20% 20%, rgba(255,255,255,.12), transparent 60%),
+              radial-gradient(120px 40px at 80% 70%, rgba(255,255,255,.09), transparent 60%);
+  filter: blur(6px);
+  z-index: -1;
+}
+.logo {
+  height: 52px;                /* más grande y legible */
+  width: auto;
+  display: block;
+  filter: brightness(0) invert(1);   /* asegura contraste en oscuro */
+}
+
+.tagline {
+  font-size: 1.05rem;          /* ↑ tamaño */
+  color: rgba(255,255,255,0.88);
+  line-height: 1.65;
+  margin: .25rem 0 0.75rem;
+}
+
+/* ===================== Bloques y títulos ===================== */
+.navBlock { min-width: 260px; }
+.blockTitle {
+  font-size: 1.075rem;         /* ↑ tamaño */
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: #e9f0f4;
+}
+
+/* ===================== Enlaces ===================== */
+.linkList { list-style: none; margin: 0; padding: 0; }
+.link {
+  font-size: 1.05rem;          /* ↑ tamaño */
+  color: rgba(255,255,255,0.92);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0;
+  transition: color .2s ease, transform .2s ease;
+}
+.link:hover,
+.link:focus {
+  color: var(--color-accent);
+  transform: translateX(2px);
+  outline: none;
+}
+
+/* ===================== Contacto ===================== */
+.address {
+  font-style: normal;
+  font-size: 1.03rem;          /* ↑ tamaño */
+  color: rgba(255,255,255,0.88);
+  margin-bottom: 0.6rem;
+}
+.contactItem { margin: 0.3rem 0; }
+.schedule {
+  font-size: 1.02rem;          /* ↑ tamaño */
+  color: rgba(255,255,255,0.78);
+  margin-top: 0.55rem;
+}
+
+/* ===================== Redes sociales ===================== */
+.social { display: flex; gap: 0.75rem; margin-top: 1rem; }
+.socialLink {
+  width: 42px; height: 42px;   /* leve ↑ */
+  border-radius: 12px;
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  display: grid; place-items: center;
+  transition: background .2s ease, transform .2s ease;
+}
+.socialLink:hover,
+.socialLink:focus {
+  background: var(--color-primary);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+/* ===================== Banda inferior ===================== */
+.bottom { background: rgba(0,0,0,0.15); }
+.bottomInner {
+  padding: 1rem 0;             /* ↑ */
+  display: flex; gap: 1rem;
+  align-items: center; justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 1rem;             /* ↑ tamaño */
+  color: rgba(255,255,255,0.92);
+}
+.legal { display: inline-flex; gap: 0.85rem; align-items: center; }
+.sep { opacity: 0.55; }
+
+/* ===================== Responsivo ===================== */
+@media (max-width: 576px) {
+  .top { padding: 2.25rem 0 1.75rem; }
+  .logo { height: 46px; }
+  .socialLink { width: 38px; height: 38px; border-radius: 10px; }
+}
+
+/* Botón/ctas del mapa */
+.mapCtas { margin-top: .55rem; }
+.mapBtn { margin-top: .25rem; }

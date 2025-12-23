@@ -1,0 +1,107 @@
+.section {
+  padding: clamp(2rem, 4vw, 4rem) 0;
+  background: var(--po-surface, #ffffff);
+}
+
+.header {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(1.6rem, 2.5vw, 2rem);
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  line-height: 1.2;
+}
+
+.subtitle {
+  color: #4a5568;
+  margin: 0;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+}
+
+.form {
+  background: #fff;
+  border-radius: 16px;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Inputs y textarea */
+.form :global(.form-control) {
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  font-size: 1rem;
+  border: 1px solid #cbd5e0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form :global(.form-control:focus) {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.3);
+}
+
+.error {
+  margin-top: 0.25rem;
+  color: #b00020;
+  font-size: 0.95rem;
+}
+
+/* Mensajes de estado */
+.liveRegion {
+  min-height: 0; /* Evita "jumping" */
+}
+
+/* Honeypot oculto */
+.honeypot {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+/* Botones y acciones */
+.actions {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+}
+
+.submit {
+  padding: 0.7rem 1.25rem;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.whatsapp {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid #25D366;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  background-color: #fff;
+  color: #25D366;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.whatsapp:hover,
+.whatsapp:focus {
+  background: #25D366;
+  color: #023b1b;
+  outline: 3px solid rgba(37, 211, 102, 0.3);
+  outline-offset: 2px;
+  transform: translateY(-2px);
+}
+
+/* Responsive mejoras */
+@media (min-width: 768px) {
+  .actions {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+}

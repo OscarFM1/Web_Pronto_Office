@@ -1,0 +1,33 @@
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.img {
+  object-fit: cover;
+  height: 200px;
+}
+
+.body {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.text {
+  color: #6c757d;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+.buttonWrapper {
+  text-align: right;
+}

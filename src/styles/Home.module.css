@@ -1,0 +1,160 @@
+/* ===== Paleta corporativa coherente ===== */
+:root{
+  --color-azul:#005baa;
+  --color-azul-hover:#004a8a;
+  --color-rojo:#e63946;
+  --color-amarillo:#ffb703;
+  --gris-50:#f8fafc;
+  --gris-100:#f1f5f9;
+  --gris-300:#e2e8f0;
+  --gris-700:#334155;
+  --ink:#1f2937;         /* texto primario */
+  --ink-2:#253045;       /* texto secundario */
+}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;
+  padding:clamp(2rem,5vw,4rem) 0;
+  background:
+    radial-gradient(1000px 400px at 15% -10%, rgba(0,91,170,.08), transparent 60%),
+    linear-gradient(180deg,#fff 0%,#fbfdff 100%);
+}
+.bgDecor{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(700px 300px at 85% 10%, rgba(230,57,70,.08), transparent 60%),
+    radial-gradient(600px 300px at 10% 90%, rgba(255,183,3,.10), transparent 55%);
+}
+.heroGrid{ max-width:1200px; }
+
+/* --- Card texto (glass) con borde degradado discreto --- */
+.textCard{
+  position:relative;
+  background:rgba(255,255,255,.78);
+  backdrop-filter:blur(6px);
+  border:1px solid var(--gris-300);
+  border-radius:22px;
+  padding:clamp(1rem,2.5vw,1.6rem);
+  box-shadow:0 10px 30px rgba(2,8,23,.06);
+  overflow:hidden;
+}
+.cardGlow{
+  position:absolute; inset:-1px;
+  border-radius:inherit;
+  background:linear-gradient(120deg, rgba(0,91,170,.22), rgba(230,57,70,.18), rgba(255,183,3,.18));
+  filter:blur(18px) opacity(.25);
+  z-index:-1;
+}
+
+/* Títulos */
+.title{
+  font-size:clamp(2rem,4.5vw,3.2rem);
+  line-height:1.1;
+  font-weight:900;
+  color:var(--ink);
+  margin:0 0 .6rem;
+}
+.highlight{ color:var(--color-rojo); }
+.nowrap{ white-space:nowrap; display:inline-block; }
+
+/* Beneficios */
+.featureList{
+  list-style:none; padding:0; margin:.75rem 0 1.25rem;
+  display:grid; gap:.6rem;
+}
+.featureList li{
+  display:grid; grid-template-columns:auto 1fr; align-items:center; gap:.6rem;
+  opacity:1; filter:none;
+}
+.check{ width:22px; height:22px; flex-shrink:0; margin-top:2px; transition:transform .15s ease; }
+.checkRed{ color:var(--color-rojo); }
+.featureList li:hover .check{ transform:scale(1.06); }
+.featureText{ color:#0b0f19; font-size:1.06rem; font-weight:600; }
+.featureText strong{ font-weight:800; }
+
+/* CTAs */
+.ctas{ display:flex; gap:.75rem; flex-wrap:wrap; }
+.ctaPrimary{
+  background:var(--color-rojo); border:2px solid var(--color-rojo); color:#fff;
+  font-weight:800; padding:.78rem 1.15rem; border-radius:14px;
+  box-shadow:0 10px 24px rgba(230,57,70,.25);
+  transition:transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+  text-decoration:none;
+}
+.ctaPrimary:hover,.ctaPrimary:focus{
+  background:#d92f3d; border-color:#d92f3d; transform:translateY(-2px);
+  box-shadow:0 14px 30px rgba(230,57,70,.32);
+  outline:3px solid rgba(230,57,70,.22); outline-offset:2px;
+}
+.ctaGhost{
+  border:1px solid rgba(0,0,0,.08);
+  padding:.78rem 1.15rem; border-radius:14px;
+  text-decoration:none; color:var(--ink);
+  background:rgba(255,255,255,.7); backdrop-filter:blur(6px);
+  transition:transform .16s ease, border-color .18s ease, background .18s ease;
+}
+.ctaGhost:hover{ transform:translateY(-2px); border-color:rgba(0,0,0,.18); }
+
+/* Métricas */
+.statsRow{
+  display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem;
+}
+.statCard{
+  min-width:140px; padding:.7rem .9rem; border-radius:12px;
+  border:1px solid var(--gris-300); background:#fff;
+  box-shadow:0 8px 22px rgba(2,8,23,.06);
+  display:flex; flex-direction:column; align-items:flex-start; gap:.15rem;
+  transition:transform .16s ease, box-shadow .18s ease;
+}
+.statCard:hover, .statCard:focus{
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(2,8,23,.10);
+}
+.statCard strong{ font-size:1.15rem; color:var(--ink); font-weight:900; line-height:1; }
+.statCard span{ color:#4b5563; font-size:.92rem; }
+
+/* Imagen hero (menos “zoom” con cover) */
+.heroImage{
+  width:min(100%, 940px); height:auto; border-radius:28px;
+  box-shadow:0 18px 40px rgba(2,8,23,.15), inset 0 0 0 1px rgba(255,255,255,.6);
+  aspect-ratio:5/4;       /* más alto → menos recorte */
+  object-fit:cover;
+  object-position:55% 45%;
+}
+@media (max-width:1199px){
+  .heroImage{ aspect-ratio:4/3; object-position:55% 45%; }
+}
+@media (max-width:767px){
+  .textCard{ background:rgba(255,255,255,.88); }
+  .heroImage{ aspect-ratio:4/3; object-position:50% 45%; }
+}
+
+/* Card flotante sobre la imagen */
+.floatBadge{
+  position:absolute; right:10%; bottom:12%;
+  display:flex; align-items:center; gap:.55rem;
+  background:rgba(255,255,255,.9); border:1px solid rgba(0,0,0,.08);
+  padding:.6rem .8rem; border-radius:14px;
+  box-shadow:0 12px 30px rgba(2,8,23,.12);
+}
+.floatIcon{ color:var(--color-azul); }
+.floatBadge strong{ display:block; font-size:.95rem; color:var(--ink); line-height:1.05; }
+.floatBadge span{ display:block; font-size:.84rem; color:#4b5563; }
+.stars{ display:flex; gap:.12rem; color:var(--color-amarillo); }
+
+/* ===== BARRA DE CONFIANZA ===== */
+.trustBar{
+  padding:1.4rem 0 2rem;
+  background:linear-gradient(180deg,#fbfdff 0%, #ffffff 100%);
+}
+.trustWrap{ max-width:1200px; }
+.trustLead{
+  color:#607089; font-weight:700; font-size:.92rem; margin-right:1rem;
+}
+.logoRow{
+  list-style:none; padding:0; margin:.35rem 0 0;
+  display:flex; flex-wrap:wrap; gap:1rem; align-items:center;
+}
+.logoSvg{ width:120px; height:26px; fill:#e9eef7; stroke:#d7deea; stroke-width:1; border-radius:6px; }
+

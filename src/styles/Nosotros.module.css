@@ -1,0 +1,166 @@
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  padding: clamp(48px, 8vw, 96px) 0 28px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  overflow: clip;
+}
+.heroBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(1200px 420px at 8% 0%, rgba(230,57,70,.10), transparent),
+    radial-gradient(1200px 420px at 92% 0%, rgba(38,70,83,.10), transparent);
+}
+.heroInner { position: relative; z-index: 1; }
+
+.title {
+  font-size: clamp(30px, 5.4vw, 46px);
+  line-height: 1.1;
+  font-weight: 800;
+  color: #0b1220;
+  margin: 0 0 .5rem;
+}
+.brand { color: var(--color-primary, #E63946); }
+
+.subtitle {
+  font-size: clamp(15px, 2.2vw, 18px);
+  color: #2c3e50;
+  max-width: 72ch;
+}
+.subline { display: block; margin-top: .35rem; max-width: 68ch; }
+
+.heroCtas { display: flex; gap: .75rem; margin-top: 1rem; }
+.ctaPrimary {
+  background: var(--color-primary, #E63946);
+  color: #fff; border-radius: 10px;
+  padding: .625rem 1rem; text-decoration: none; font-weight: 700;
+}
+.ctaPrimary:hover { filter: brightness(.95); }
+.ctaGhost {
+  border: 1px solid rgba(0,0,0,.12);
+  color: #0b1220; background: #fff;
+  border-radius: 10px; padding: .6rem 1rem; font-weight: 700;
+  text-decoration: none;
+}
+
+/* ===== ABOUT ===== */
+.about { padding: 28px 0 8px; }
+
+.h2 { font-weight: 800; font-size: clamp(22px, 3.2vw, 28px); margin-bottom: .5rem; color: #0b1220; }
+.h3 { font-weight: 800; font-size: clamp(18px, 2.6vw, 22px); margin-bottom: .75rem; color: #0b1220; }
+
+.lead { font-size: 1.05rem; color: #1f2937; }
+.copy { color: #334155; }
+
+.figure {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(15,23,42,.08);
+}
+.figure img { width: 100%; height: auto; display: block; object-fit: cover; }
+
+/* ===== VALORES ===== */
+.values { padding: 16px 0 8px; }
+.valuesList {
+  list-style: none; padding: 0; margin: .5rem 0 0;
+  display: grid; gap: .9rem;
+}
+@media (min-width: 768px) {
+  .valuesList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.valueItem {
+  display: grid; grid-template-columns: auto 1fr; gap: .75rem;
+  align-items: start;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 24px rgba(15,23,42,.05);
+  min-height: 110px;
+}
+.valueItem strong { display: block; color: #0b1220; }
+.valueItem p { margin: .15rem 0 0; color: #475569; }
+.valueIcon {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: 999px;
+  color: var(--color-primary, #E63946);
+  background: rgba(230,57,70,.10);
+}
+
+/* ===== MÉTRICAS ===== */
+.metrics {
+  padding: 28px 0 56px;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+}
+.metricsList {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: .75rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.metricNumber {
+  display: block;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 800; color: #0b1220; line-height: 1;
+}
+.metricLabel { color: #475569; }
+
+/* A11y util */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+
+/* ==========================================================================
+   AJUSTE: reemplazo de foto del equipo por logo grande + CTA en "Quiénes somos"
+   - Mantiene la columna derecha con presencia visual (sin fotos)
+   - Diseño corporativo: card sutil + borde + sombra suave
+   - CTA consistente con marca (rojo primario)
+   ========================================================================== */
+
+.brandBlock {
+  width: 100%;
+  max-width: 380px;
+  margin-inline: auto;
+  padding: 2rem 1.5rem;
+  background: #fff;
+  border: 1px solid var(--gris-300);
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+
+.brandLogo {
+  width: 100%;
+  max-width: 280px; /* logo grande sin desbordar */
+  height: auto;
+  margin: 0 auto 1.25rem;
+  display: block;
+}
+
+.brandCta {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.brandCta:hover {
+  background: color-mix(in oklab, var(--color-primary) 90%, black);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+}
+
+.brandCta:focus-visible {
+  outline: 3px solid var(--color-azul);
+  outline-offset: 3px;
+  border-radius: 12px;
+}

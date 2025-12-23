@@ -1,0 +1,66 @@
+/* src/styles/Navbar.module.css */
+.navbar {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 0.75rem 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  font-family: var(--font-family-base);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+.logo {
+  height: 32px;                /* Reducido de 40px a 32px */
+  margin-right: 0.5rem;
+}
+
+.toggle {
+  border-color: var(--color-primary);
+}
+
+.navLink {
+  position: relative;
+  margin: 0 1rem;
+  color: var(--color-text) !important;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+}
+
+.navLink:hover,
+.navLink:focus {
+  color: var(--color-primary) !important;
+}
+
+/* Subrayado animado */
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;                      /* Grosor aumentado */
+  background-color: var(--color-primary);
+  transition: width 0.3s ease, left 0.3s ease;
+}
+.navLink:hover::after,
+.navLink:focus::after {
+  width: 100%;
+  left: 0;
+}
+
+.active {
+  color: var(--color-primary) !important;
+}
+.active::after {
+  width: 100%;
+  left: 0;
+}
+
+
+.logo {
+  height: 48px;   /* Antes 32px, ahora 48px para mayor presencia */
+  margin-right: 0.5rem;
+}

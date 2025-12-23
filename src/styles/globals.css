@@ -1,0 +1,264 @@
+/* src/styles/globals.css
+   ============================================================================
+   Global reset + variables + utilidades
+   - Seguro para React-Bootstrap (NO pisa .container ni .btn-primary)
+   - Accesible: focus visible, prefers-reduced-motion, contraste
+   - Coherente con la paleta de marca usada en el proyecto (alias incluidos)
+   ============================================================================ */
+
+/* ===== Reset minimal + box-sizing ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Variables globales (tu paleta) ===== */
+:root {
+  /* Tu paleta base */
+  --color-primary:    #E63946;   /* rojo marca */
+  --color-secondary:  #264653;   /* azul petróleo */
+  --color-accent:     #F4D35E;   /* amarillo acento */
+  --color-bg:         #F8F9FA;   /* fondo claro */
+  --color-text:       #2C3E50;   /* texto principal */
+
+  /* === Alias de la paleta corporativa ya usada en otras vistas === */
+  --color-rojo:       var(--color-primary);
+  --color-azul:       #005BAA;         /* azul marca secundario usado en UI */
+  --color-azul-hover: #004A8A;
+  --color-amarillo:   var(--color-accent);
+  --gris-50:          #F8FAFC;
+  --gris-100:         #F1F5F9;
+  --gris-300:         #E2E8F0;
+  --gris-700:         #334155;
+  --negro:            #0B1220;
+
+  /* Tipografía y ritmo vertical */
+  --font-family-base: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --font-size-base:   16px;
+  --line-height:      1.55;
+
+  /* Radios y sombras suaves coherentes */
+  --radius:           16px;
+  --shadow-soft:      0 4px 16px rgba(0,0,0,.06);
+}
+
+/* ===== Tipografía base ===== */
+html {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  background: var(--color-bg);
+  color: var(--color-text);
+  /* Scroll suave, con respeto a reduced-motion */
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Titulares con márgenes consistentes (mejor legibilidad/SEO on-page) */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--negro);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 .5rem;
+}
+p { margin: .5rem 0 1rem; }
+
+/* Enlaces accesibles */
+a {
+  color: var(--color-azul);
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+a:hover { color: var(--color-azul-hover); }
+a:focus-visible {
+  outline: 3px solid var(--color-azul);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Imágenes fluidas por defecto */
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Selección de texto con color de marca (mejora UX) */
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 18%, white);
+}
+
+/* ===== Utilidades (NO sobrescriben Bootstrap) ===== */
+
+/* En lugar de .container de Bootstrap, usa esta util si necesitas un wrapper manual */
+.u-container {
+  width: min(1200px, 92vw);
+  margin-inline: auto;
+}
+
+/* Tarjetas y badges reutilizables */
+.u-card {
+  background: #fff;
+  border: 1px solid var(--gris-300);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+.u-badge {
+  display: inline-block;
+  padding: .25rem .55rem;
+  border-radius: 999px;
+  background: var(--gris-100);
+  font-weight: 600;
+  color: var(--negro);
+}
+
+/* Botón de marca (no pisa .btn-primary de Bootstrap) */
+.btn-brand {
+  background: var(--color-primary);
+  color: #fff;
+  padding: .55rem 1rem;
+  border-radius: 8px;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-brand:hover {
+  background: color-mix(in oklab, var(--color-primary) 90%, black);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+.btn-brand:focus-visible {
+  outline: 3px solid var(--color-azul);
+  outline-offset: 2px;
+}
+
+/* Espaciado de secciones comunes (para landing blocks) */
+.section {
+  padding-block: clamp(1.5rem, 3vw, 3rem);
+}
+
+/* Anclas suaves: evita que el header tape títulos al navegar con #id */
+[id] { scroll-margin-top: 80px; }
+
+/* ===== Motion seguro ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== (Opcional) Dark mode de cortesía — desactivado por defecto ===== */
+/*
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0f172a;
+    --color-text: #e2e8f0;
+    --gris-300: #334155;
+  }
+  html { background: var(--color-bg); color: var(--color-text); }
+  .u-card { background: #0b1220; border-color: var(--gris-300); }
+  a { color: #60a5fa; }
+}
+*/
+
+/* ============================================================================
+   SLOGAN GLOBAL (utilidades reusables)
+   - Tipografía jerárquica, acentos de marca y subrayado decorativo.
+   - No colisiona con Bootstrap; clases con prefijo .u-slogan*
+   - Respeta prefers-reduced-motion y es responsive.
+============================================================================ */
+.u-slogan-wrap {
+  margin: 1.25rem 0 1rem;
+  max-width: 72ch;              /* legible y elegante */
+}
+
+.u-slogan-text {
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--negro);
+  position: relative;
+  display: inline-block;
+  padding-left: .5rem;          /* espacio para la barra decorativa */
+}
+
+/* Barra vertical sutil (rojo marca) */
+.u-slogan-text::before {
+  content: "";
+  position: absolute;
+  left: -0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 85%;
+  border-radius: 4px;
+  background: var(--color-primary);
+}
+
+/* Acentos de marca */
+.u-slogan-strong {              /* palabra clave de la marca */
+  color: var(--color-azul);
+  font-weight: 800;
+}
+.u-slogan-accent {              /* verbos de acción */
+  color: var(--color-primary);
+  font-weight: 800;
+  position: relative;
+  z-index: 0;
+}
+
+/* === Subrayado coral profesional (tono cálido y moderno) === */
+.u-slogan-accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: .08em;
+  height: .28em;
+  /* mezcla cálida entre rojo corporativo y blanco: tono coral pastel */
+  background: color-mix(in oklab, var(--color-primary) 40%, white 55%);
+  border-radius: 3px;
+  opacity: 0.9;
+  z-index: -1;
+  transition: background .3s ease, opacity .3s ease;
+}
+
+/* Hover opcional: un poco más saturado */
+.u-slogan-accent:hover::after {
+  background: color-mix(in oklab, var(--color-primary) 55%, white 40%);
+  opacity: 1;
+}
+
+
+/* Variante centrada opcional (por si la necesitas en otro hero) */
+.u-slogan--center {
+  text-align: center;
+  display: block;
+}
+
+/* Motion seguro */
+@media (prefers-reduced-motion: reduce) {
+  .u-slogan-text::before,
+  .u-slogan-accent::after {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,28 @@
+
+[
+  {
+    "id": 1,
+    "category": "tableros",
+    "title": "Tablero Blanco 90×60 cm",
+    "description": "Superficie esmaltada, marco de aluminio y fácil montaje.",
+    "image": "/images/tablero-blanco.webp",
+    "alt": "Tablero blanco de 90 por 60 centímetros"
+  },
+  {
+    "id": 2,
+    "category": "tableros",
+    "title": "Tablero Corcho 120×90 cm",
+    "description": "Corcho natural de alta densidad, resistente y duradero.",
+    "image": "/images/tablero-corroco.webp",
+    "alt": "Tablero de corcho de 120 por 90 centímetros"
+  },
+  {
+    "id": 3,
+    "category": "suministros",
+    "title": "Paquete de Lapiceros Azul x12",
+    "description": "Lapiceros de tinta gel, punta fina 0.7 mm.",
+    "image": "/images/lapiceros-azul.webp",
+    "alt": "Paquete de 12 lapiceros azules"
+  }
+  
+]
