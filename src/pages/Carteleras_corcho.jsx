@@ -33,7 +33,7 @@ const BOARD_ITEMS = [
   { id: 2, name: "Cartelera de Corcho ", size: "30×40 cm", corTag: "estandar",       src: "/img/carteleras_corcho/cartelera_corcho2.jpg" },
   { id: 3, name: "Cartelera Personalizada ", size: "60x90", corTag: "personalizadas", src: "/img/carteleras_corcho/cartelera_corcho3.png" },
   { id: 4, name: "Cartelera Con Rodachines",     size: "peronalizada",  corTag: "mixtas",        src: "/img/carteleras_corcho/cartelera_corcho4.jpg" },
-  { id: 5, name: "Cartelera de Corcho extra",                size: "personalizada",  corTag: "rodachines",    src: "/img/carteleras_corcho/cartelera_corcho5.jpg" },
+  { id: 5, name: "Cartelera de Corcho extra",                size: "60x45",  corTag: "rodachines",    src: "/img/carteleras_corcho/cartelera_corcho5.jpg" },
   { id: 6, name: "Cartelera Mixta (Corcho + Acrílico)",               size: "Personalizada", corTag: "estandar",       src: "/img/carteleras_corcho/cartelera_corcho6.jpg" },
 ];
 
