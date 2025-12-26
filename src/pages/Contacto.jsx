@@ -1,12 +1,15 @@
 // src/pages/Contacto.jsx
 // =============================================================================
-// Contacto (con Formspree opcional) + validación + honeypot + checkbox obligatorio
+// Contacto (Formspree) + validación + honeypot + checkbox obligatorio
 // de aceptación de Política de Tratamiento de Datos Personales (Ley 1581 / Habeas Data).
 //
-// Implementación clave:
-// - Link directo a PDF estático en /public
-// - URL codificada (acentos + espacios)
-// - Evidencia de consentimiento enviada al backend
+// FIX CLAVE (PROD):
+// - Formspree + CAPTCHA/Formshield suele FALLAR con JSON ("Content-Type: application/json").
+// - Se cambia a envío con FormData (multipart/form-data automático del navegador).
+//
+// Implementación:
+// - Link directo a PDF estático en /public (URL codificada)
+// - Evidencia de consentimiento enviada a Formspree
 // - Accesibilidad (ARIA) y UX correctas
 // =============================================================================
 
@@ -20,7 +23,7 @@ import styles from "../styles/Contacto.module.css";
  * El número se toma desde variables de entorno.
  */
 const buildWhatsAppLink = (text = "") => {
-  const phone = import.meta.env.VITE_WHATSAPP_PHONE || "573000000000";
+  const phone = import.meta.env.VITE_WHATSAPP_PHONE || "573144435763";
   const encoded = encodeURIComponent(text);
   return `https://wa.me/${phone}?text=${encoded}`;
 };
@@ -35,7 +38,7 @@ const buildMailtoHref = ({ name, email, phone, message }) => {
     /\n/g,
     "%0D%0A"
   );
-  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${body}`;
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 };
 
 export default function Contacto() {
@@ -62,7 +65,7 @@ export default function Contacto() {
   );
 
   /**
-   * Validación en cliente
+   * Validación en cliente (simple y suficiente).
    */
   const validate = () => {
     const e = {};
@@ -75,10 +78,7 @@ export default function Contacto() {
       e.email = "El email es obligatorio.";
     }
 
-    if (
-      !form.phone.trim() ||
-      !/^\+?\d[\d\s\-().]{6,}$/.test(form.phone.trim())
-    ) {
+    if (!form.phone.trim() || !/^\+?\d[\d\s\-().]{6,}$/.test(form.phone.trim())) {
       e.phone = "Ingresa un teléfono válido.";
     }
 
@@ -124,23 +124,42 @@ export default function Contacto() {
       setStatus("loading");
       setServerMsg("");
 
+      /**
+       * FIX CLAVE:
+       * Enviar con FormData para compatibilidad con CAPTCHA/Formshield en Formspree.
+       * NO seteamos Content-Type manualmente: el navegador lo maneja.
+       */
+      const formData = new FormData();
+
+      // Campos visibles del formulario
+      formData.append("name", form.name);
+      formData.append("phone", form.phone);
+      formData.append("email", form.email);
+      formData.append("message", form.message);
+
+      // Honeypot anti-spam (Formspree suele reconocerlo)
+      // Si tu input usa name="_gotcha", lo enviamos también.
+      // (Ojo: como el input está en el DOM, también se enviaría si usáramos <form action=...>,
+      // pero como usamos fetch, lo añadimos explícitamente vacío)
+      formData.append("_gotcha", "");
+
+      // Evidencia legal de consentimiento
+      formData.append("acceptedPolicy", "true");
+      formData.append("policyVersion", "2025-01");
+
+      // Helpers Formspree (mejoran el inbox)
+      formData.append("_subject", `Nuevo contacto: ${form.name || "Sin nombre"}`);
+      formData.append("_replyto", form.email);
+
       const res = await fetch(action, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({
-          ...form,
-
-          // Evidencia legal de consentimiento
-          acceptedPolicy: true,
-          policyVersion: "2025-01",
-
-          _subject: `Nuevo contacto: ${form.name || "Sin nombre"}`,
-          _replyto: form.email,
-        }),
+        body: formData,
       });
+
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
         setStatus("success");
@@ -148,14 +167,11 @@ export default function Contacto() {
         setForm({ name: "", phone: "", email: "", message: "" });
         setAcceptedPolicy(false);
       } else {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(
-          data?.errors?.[0]?.message || "No se pudo enviar el formulario."
-        );
+        throw new Error(data?.errors?.[0]?.message || "No se pudo enviar el formulario.");
       }
     } catch (err) {
       setStatus("error");
-      setServerMsg(err.message || "Ocurrió un error al enviar el mensaje.");
+      setServerMsg(err?.message || "Ocurrió un error al enviar el mensaje.");
     } finally {
       setTimeout(() => setStatus("idle"), 6000);
     }
@@ -183,18 +199,27 @@ export default function Contacto() {
                 </p>
               </header>
 
+              {/* Mensajes accesibles */}
               <div role="status" aria-live="polite">
                 {status === "loading" && (
-                  <Alert variant="info">
-                    <Spinner size="sm" className="me-2" /> Enviando…
+                  <Alert variant="info" className="mb-3">
+                    <Spinner animation="border" size="sm" className="me-2" /> Enviando…
                   </Alert>
                 )}
-                {status === "success" && <Alert variant="success">{serverMsg}</Alert>}
-                {status === "error" && <Alert variant="danger">{serverMsg}</Alert>}
+                {status === "success" && (
+                  <Alert variant="success" className="mb-3">
+                    {serverMsg}
+                  </Alert>
+                )}
+                {status === "error" && (
+                  <Alert variant="danger" className="mb-3">
+                    {serverMsg}
+                  </Alert>
+                )}
               </div>
 
               <Form onSubmit={onSubmit} noValidate>
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3" controlId="contactName">
                   <Form.Label>Nombre</Form.Label>
                   <Form.Control
                     name="name"
@@ -202,13 +227,21 @@ export default function Contacto() {
                     onChange={onChange}
                     placeholder="Tu nombre"
                     required
+                    minLength={2}
+                    autoComplete="name"
+                    aria-invalid={!!errors.name}
+                    aria-describedby="nameError"
                   />
-                  {errors.name && <div className={styles.error}>{errors.name}</div>}
+                  {errors.name && (
+                    <div id="nameError" className={styles.error} role="alert">
+                      {errors.name}
+                    </div>
+                  )}
                 </Form.Group>
 
                 <Row>
                   <Col md={6}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3" controlId="contactPhone">
                       <Form.Label>Teléfono</Form.Label>
                       <Form.Control
                         name="phone"
@@ -216,13 +249,21 @@ export default function Contacto() {
                         onChange={onChange}
                         placeholder="+57 300 000 0000"
                         required
+                        inputMode="tel"
+                        autoComplete="tel"
+                        aria-invalid={!!errors.phone}
+                        aria-describedby="phoneError"
                       />
-                      {errors.phone && <div className={styles.error}>{errors.phone}</div>}
+                      {errors.phone && (
+                        <div id="phoneError" className={styles.error} role="alert">
+                          {errors.phone}
+                        </div>
+                      )}
                     </Form.Group>
                   </Col>
 
                   <Col md={6}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3" controlId="contactEmail">
                       <Form.Label>E-mail</Form.Label>
                       <Form.Control
                         type="email"
@@ -231,13 +272,20 @@ export default function Contacto() {
                         onChange={onChange}
                         placeholder="tu@correo.com"
                         required
+                        autoComplete="email"
+                        aria-invalid={!!errors.email}
+                        aria-describedby="emailError"
                       />
-                      {errors.email && <div className={styles.error}>{errors.email}</div>}
+                      {errors.email && (
+                        <div id="emailError" className={styles.error} role="alert">
+                          {errors.email}
+                        </div>
+                      )}
                     </Form.Group>
                   </Col>
                 </Row>
 
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3" controlId="contactMessage">
                   <Form.Label>Mensaje</Form.Label>
                   <Form.Control
                     as="textarea"
@@ -247,19 +295,36 @@ export default function Contacto() {
                     onChange={onChange}
                     placeholder="Cuéntanos qué necesitas (medidas, cantidades, plazos)…"
                     required
+                    minLength={10}
+                    maxLength={1500}
+                    aria-invalid={!!errors.message}
+                    aria-describedby="messageError"
                   />
-                  {errors.message && <div className={styles.error}>{errors.message}</div>}
+                  {errors.message && (
+                    <div id="messageError" className={styles.error} role="alert">
+                      {errors.message}
+                    </div>
+                  )}
                 </Form.Group>
 
-                {/* Honeypot */}
-                <input type="text" name="_gotcha" className={styles.honeypot} />
+                {/* Honeypot (debe quedar oculto en CSS) */}
+                <input
+                  type="text"
+                  name="_gotcha"
+                  className={styles.honeypot}
+                  tabIndex="-1"
+                  autoComplete="off"
+                />
 
                 {/* Aceptación Política de Datos */}
-                <Form.Group className="mb-3">
+                <Form.Group className="mb-3" controlId="acceptPolicy">
                   <Form.Check
                     type="checkbox"
                     checked={acceptedPolicy}
                     onChange={(e) => setAcceptedPolicy(e.target.checked)}
+                    required
+                    aria-required="true"
+                    aria-invalid={!!(policyError || errors.policy)}
                     label={
                       <>
                         Acepto la{" "}
@@ -275,7 +340,9 @@ export default function Contacto() {
                     }
                   />
                   {(policyError || errors.policy) && (
-                    <div className={styles.error}>{policyError || errors.policy}</div>
+                    <div className={styles.error} role="alert">
+                      {policyError || errors.policy}
+                    </div>
                   )}
                 </Form.Group>
 
@@ -291,6 +358,7 @@ export default function Contacto() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.whatsapp}
+                    aria-label="Escribir por WhatsApp"
                   >
                     Escríbenos por WhatsApp
                   </a>

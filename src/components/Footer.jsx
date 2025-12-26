@@ -11,7 +11,18 @@ const MapEmbed = lazy(() => import("./MapEmbed"));
 export default function Footer() {
   const year = new Date().getFullYear();
   const [showMap, setShowMap] = useState(false);
+
+  // Dirección usada para Google Maps
   const address = "Calle 14 Nro. 12-31 Of. 306, Bogotá, Colombia";
+
+  /**
+   * Link al PDF de Política de Tratamiento de Datos Personales.
+   * - El archivo está en /public (o en la raíz del deploy).
+   * - Se codifica porque incluye tildes y espacios.
+   * - Abrimos en nueva pestaña.
+   */
+  const policyPdfHref =
+    "/POL%C3%8DTICA%20DE%20TRATAMIENTO%20DE%20DATOS%20PERSONALES.pdf";
 
   return (
     <footer className={styles.footer} role="contentinfo">
@@ -85,16 +96,47 @@ export default function Footer() {
               <nav aria-label="Navegación del sitio" className={styles.navBlock}>
                 <h3 className={styles.blockTitle}>Navegación</h3>
                 <ul className={styles.linkList}>
-                  <li><Link className={styles.link} to="/">Home</Link></li>
-                  <li><Link className={styles.link} to="/tableros">Tableros</Link></li>
-                  <li><Link className={styles.link} to="/carteleras/corcho">Carteleras de Corcho</Link></li>
-                  <li><Link className={styles.link} to="/carteleras/corporativas">Carteleras Corporativas</Link></li>
-                  <li><Link className={styles.link} to="/otros">Otros productos</Link></li>
-                  <li><Link className={styles.link} to="/suministros">Suministros</Link></li>
-                  <li><Link className={styles.link} to="/nosotros">Nosotros</Link></li>
-                  <li><Link className={styles.link} to="/contacto">Contáctanos</Link></li>
+                  <li>
+                    <Link className={styles.link} to="/">
+                      Home
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className={styles.link} to="/tableros">
+                      Tableros
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className={styles.link} to="/carteleras/corcho">
+                      Carteleras de Corcho
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className={styles.link} to="/carteleras/corporativas">
+                      Carteleras Corporativas
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className={styles.link} to="/otros">
+                      Otros productos
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className={styles.link} to="/suministros">
+                      Suministros
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className={styles.link} to="/nosotros">
+                      Nosotros
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className={styles.link} to="/contacto">
+                      Contáctanos
+                    </Link>
+                  </li>
                 </ul>
-
               </nav>
             </Col>
 
@@ -138,6 +180,7 @@ export default function Footer() {
                   >
                     Ver mapa
                   </Button>
+
                   <a
                     className={styles.link}
                     href={`https://www.google.com/maps?q=${encodeURIComponent(address)}`}
@@ -157,12 +200,28 @@ export default function Footer() {
         <div className={styles.bottom}>
           <Container className={styles.bottomInner}>
             <span>© {year} Pronto Office. Todos los derechos reservados.</span>
+
             <div className={styles.legal}>
-              <Link className={styles.link} to="/privacidad">Privacidad</Link>
-              <span className={styles.sep} aria-hidden="true">•</span>
-              <Link className={styles.link} to="/terminos">Términos</Link>
-              <span className={styles.sep} aria-hidden="true">•</span>
-              <a className={styles.link} href="mailto:pronto2012@hotmail.com">Soporte</a>
+              {/* ✅ Privacidad abre el PDF */}
+              <a
+                className={styles.link}
+                href={policyPdfHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Abrir Política de Tratamiento de Datos Personales (PDF)"
+              >
+                Privacidad
+              </a>
+
+              {/* ✅ Eliminado “Términos” y su separador */}
+
+              <span className={styles.sep} aria-hidden="true">
+                •
+              </span>
+
+              <a className={styles.link} href="mailto:pronto2012@hotmail.com">
+                Soporte
+              </a>
             </div>
           </Container>
         </div>
