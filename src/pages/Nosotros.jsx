@@ -113,7 +113,7 @@ export default function Nosotros() {
               */}
               <div className={styles.brandBlock} aria-label="Identidad Pronto Office">
                 <img
-                  src="/img/logo.png"
+                  src="/img/img_nosotros.jpeg"
                   alt="Pronto Office"
                   className={styles.brandLogo}
                   loading="lazy"
@@ -128,7 +128,7 @@ export default function Nosotros() {
                   rel="noopener noreferrer"
                   aria-label="Contactar a Pronto Office"
                 >
-                  Contáctanos
+                  Aquí
                 </a>
               </div>
             </Col>

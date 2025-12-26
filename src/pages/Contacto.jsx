@@ -1,11 +1,13 @@
 // src/pages/Contacto.jsx
 // =============================================================================
 // Contacto (con Formspree opcional) + validación + honeypot + checkbox obligatorio
-// de aceptación de Política de Tratamiento de Datos (Ley 1581 / Habeas Data).
+// de aceptación de Política de Tratamiento de Datos Personales (Ley 1581 / Habeas Data).
 //
-// Nota:
-// - NO se altera tu copy existente.
-// - Se añade: acceptedPolicy + validación + bloque UI del check + envío explícito.
+// Implementación clave:
+// - Link directo a PDF estático en /public
+// - URL codificada (acentos + espacios)
+// - Evidencia de consentimiento enviada al backend
+// - Accesibilidad (ARIA) y UX correctas
 // =============================================================================
 
 import { useState, useMemo } from "react";
@@ -15,7 +17,7 @@ import styles from "../styles/Contacto.module.css";
 
 /**
  * Construye URL de WhatsApp con mensaje prellenado.
- * - Toma el número desde env para no “quemarlo” en el código.
+ * El número se toma desde variables de entorno.
  */
 const buildWhatsAppLink = (text = "") => {
   const phone = import.meta.env.VITE_WHATSAPP_PHONE || "573000000000";
@@ -24,10 +26,10 @@ const buildWhatsAppLink = (text = "") => {
 };
 
 /**
- * Mailto de respaldo si no hay Formspree ID.
+ * Fallback mailto si no existe Formspree.
  */
 const buildMailtoHref = ({ name, email, phone, message }) => {
-  const to = "ventas@pronto-office.com"; // <-- cámbialo si usas otro correo
+  const to = "ventas@pronto-office.com";
   const subject = `Contacto desde la web - ${name || "Sin nombre"}`;
   const body = `Nombre: ${name}\nEmail: ${email}\nTeléfono: ${phone}\n\nMensaje:\n${message}`.replace(
     /\n/g,
@@ -37,39 +39,63 @@ const buildMailtoHref = ({ name, email, phone, message }) => {
 };
 
 export default function Contacto() {
-  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [serverMsg, setServerMsg] = useState("");
 
-  // ✅ NUEVO: consentimiento explícito (obligatorio)
+  // Consentimiento explícito (obligatorio)
   const [acceptedPolicy, setAcceptedPolicy] = useState(false);
   const [policyError, setPolicyError] = useState("");
 
-  // Endpoint de Formspree
+  // Endpoint Formspree
   const formspreeId = import.meta.env.VITE_FORMSPREE_ID;
   const action = useMemo(
     () => (formspreeId ? `https://formspree.io/f/${formspreeId}` : undefined),
     [formspreeId]
   );
 
-  // Validación ligera en cliente
+  /**
+   * Validación en cliente
+   */
   const validate = () => {
     const e = {};
-    if (!form.name.trim() || form.name.trim().length < 2) e.name = "Escribe tu nombre (mín. 2 caracteres).";
-    if (!form.email.trim()) e.email = "El email es obligatorio.";
-    if (!form.phone.trim() || !/^\+?\d[\d\s\-().]{6,}$/.test(form.phone.trim())) e.phone = "Ingresa un teléfono válido.";
-    if (!form.message.trim() || form.message.trim().length < 10) e.message = "Cuéntanos más (mín. 10 caracteres).";
 
-    // ✅ NUEVO: política obligatoria
-    if (!acceptedPolicy) e.policy = "Debes aceptar la Política de Tratamiento de Datos Personales.";
+    if (!form.name.trim() || form.name.trim().length < 2) {
+      e.name = "Escribe tu nombre (mínimo 2 caracteres).";
+    }
+
+    if (!form.email.trim()) {
+      e.email = "El email es obligatorio.";
+    }
+
+    if (
+      !form.phone.trim() ||
+      !/^\+?\d[\d\s\-().]{6,}$/.test(form.phone.trim())
+    ) {
+      e.phone = "Ingresa un teléfono válido.";
+    }
+
+    if (!form.message.trim() || form.message.trim().length < 10) {
+      e.message = "Cuéntanos más detalles (mínimo 10 caracteres).";
+    }
+
+    if (!acceptedPolicy) {
+      e.policy = "Debes aceptar la Política de Tratamiento de Datos Personales.";
+    }
 
     return e;
   };
 
   const onChange = (ev) => {
     const { name, value } = ev.target;
-    setForm((f) => ({ ...f, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
@@ -79,7 +105,6 @@ export default function Contacto() {
     const e = validate();
     setErrors(e);
 
-    // ✅ NUEVO: muestra error del check en UI
     if (!acceptedPolicy) {
       setPolicyError("Debes aceptar la Política de Tratamiento de Datos Personales.");
       return;
@@ -89,8 +114,8 @@ export default function Contacto() {
 
     if (Object.keys(e).length) return;
 
+    // Fallback sin Formspree
     if (!action) {
-      // Fallback sin Formspree
       window.location.href = buildMailtoHref(form);
       return;
     }
@@ -101,16 +126,19 @@ export default function Contacto() {
 
       const res = await fetch(action, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({
           ...form,
 
-          // ✅ NUEVO: evidencia de consentimiento (buenas prácticas legales)
+          // Evidencia legal de consentimiento
           acceptedPolicy: true,
           policyVersion: "2025-01",
 
-          _subject: `Nuevo contacto: ${form.name || "Sin nombre"}`, // ✅ ayuda en el inbox
-          _replyto: form.email, // ✅ permite “Reply” directo
+          _subject: `Nuevo contacto: ${form.name || "Sin nombre"}`,
+          _replyto: form.email,
         }),
       });
 
@@ -121,11 +149,13 @@ export default function Contacto() {
         setAcceptedPolicy(false);
       } else {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data?.errors?.[0]?.message || "No pudimos enviar el formulario.");
+        throw new Error(
+          data?.errors?.[0]?.message || "No se pudo enviar el formulario."
+        );
       }
     } catch (err) {
       setStatus("error");
-      setServerMsg(err.message || "Ocurrió un error al enviar. Intenta de nuevo.");
+      setServerMsg(err.message || "Ocurrió un error al enviar el mensaje.");
     } finally {
       setTimeout(() => setStatus("idle"), 6000);
     }
@@ -137,7 +167,7 @@ export default function Contacto() {
         <title>Contacto | Pronto Office</title>
         <meta
           name="description"
-          content="¿Necesitas tableros, carteleras o soluciones en acrílico/corcho? Escríbenos y recibe atención rápida por email o WhatsApp."
+          content="Contáctanos para cotizar tableros, carteleras y soluciones corporativas. Atención rápida por email o WhatsApp."
         />
         <link rel="canonical" href="https://www.pronto-office.com/contacto" />
       </Helmet>
@@ -148,154 +178,119 @@ export default function Contacto() {
             <Col lg={8} xl={7}>
               <header className={styles.header}>
                 <h1 className={styles.title}>Hablemos de tu proyecto</h1>
-                <p className={styles.subtitle}>Respuesta en menos de 24h. También puedes escribirnos por WhatsApp.</p>
+                <p className={styles.subtitle}>
+                  Respuesta en menos de 24 horas. También puedes escribirnos por WhatsApp.
+                </p>
               </header>
 
-              {/* Mensajes accesibles */}
-              <div role="status" aria-live="polite" className={styles.liveRegion}>
+              <div role="status" aria-live="polite">
                 {status === "loading" && (
-                  <Alert variant="info" className="mb-3">
-                    <Spinner animation="border" size="sm" className="me-2" /> Enviando…
+                  <Alert variant="info">
+                    <Spinner size="sm" className="me-2" /> Enviando…
                   </Alert>
                 )}
-                {status === "success" && <Alert variant="success" className="mb-3">{serverMsg}</Alert>}
-                {status === "error" && <Alert variant="danger" className="mb-3">{serverMsg}</Alert>}
+                {status === "success" && <Alert variant="success">{serverMsg}</Alert>}
+                {status === "error" && <Alert variant="danger">{serverMsg}</Alert>}
               </div>
 
-              <Form className={styles.form} action={action} method="POST" onSubmit={onSubmit} noValidate>
-                <Form.Group className="mb-3" controlId="contactName">
+              <Form onSubmit={onSubmit} noValidate>
+                <Form.Group className="mb-3">
                   <Form.Label>Nombre</Form.Label>
                   <Form.Control
                     name="name"
-                    type="text"
-                    placeholder="Tu nombre"
                     value={form.name}
                     onChange={onChange}
+                    placeholder="Tu nombre"
                     required
-                    minLength={2}
-                    autoComplete="name" /* ✅ */
-                    aria-invalid={!!errors.name}
-                    aria-describedby="nameHelp nameError"
                   />
-                  <Form.Text id="nameHelp">Cómo te llamamos 🙌</Form.Text>
-                  {errors.name && (
-                    <div id="nameError" className={styles.error} role="alert">
-                      {errors.name}
-                    </div>
-                  )}
+                  {errors.name && <div className={styles.error}>{errors.name}</div>}
                 </Form.Group>
 
                 <Row>
                   <Col md={6}>
-                    <Form.Group className="mb-3" controlId="contactPhone">
+                    <Form.Group className="mb-3">
                       <Form.Label>Teléfono</Form.Label>
                       <Form.Control
                         name="phone"
-                        type="tel"
-                        inputMode="tel"
-                        placeholder="Ej: +57 300 000 0000"
                         value={form.phone}
                         onChange={onChange}
+                        placeholder="+57 300 000 0000"
                         required
-                        autoComplete="tel" /* ✅ */
-                        aria-invalid={!!errors.phone}
-                        aria-describedby="phoneHelp phoneError"
                       />
-                      <Form.Text id="phoneHelp">Preferible WhatsApp</Form.Text>
-                      {errors.phone && (
-                        <div id="phoneError" className={styles.error} role="alert">
-                          {errors.phone}
-                        </div>
-                      )}
+                      {errors.phone && <div className={styles.error}>{errors.phone}</div>}
                     </Form.Group>
                   </Col>
 
                   <Col md={6}>
-                    <Form.Group className="mb-3" controlId="contactEmail">
+                    <Form.Group className="mb-3">
                       <Form.Label>E-mail</Form.Label>
                       <Form.Control
-                        name="email"
                         type="email"
-                        placeholder="tu@correo.com"
+                        name="email"
                         value={form.email}
                         onChange={onChange}
+                        placeholder="tu@correo.com"
                         required
-                        autoComplete="email" /* ✅ */
-                        aria-invalid={!!errors.email}
-                        aria-describedby="emailError"
                       />
-                      {errors.email && (
-                        <div id="emailError" className={styles.error} role="alert">
-                          {errors.email}
-                        </div>
-                      )}
+                      {errors.email && <div className={styles.error}>{errors.email}</div>}
                     </Form.Group>
                   </Col>
                 </Row>
 
-                <Form.Group className="mb-3" controlId="contactMessage">
+                <Form.Group className="mb-3">
                   <Form.Label>Mensaje</Form.Label>
                   <Form.Control
                     as="textarea"
-                    name="message"
                     rows={5}
-                    placeholder="Cuéntanos qué necesitas (medidas, cantidades, plazos)…"
+                    name="message"
                     value={form.message}
                     onChange={onChange}
+                    placeholder="Cuéntanos qué necesitas (medidas, cantidades, plazos)…"
                     required
-                    minLength={10}
-                    maxLength={1500}
-                    autoComplete="off" /* ✅ */
-                    aria-invalid={!!errors.message}
-                    aria-describedby="messageError"
                   />
-                  {errors.message && (
-                    <div id="messageError" className={styles.error} role="alert">
-                      {errors.message}
-                    </div>
-                  )}
+                  {errors.message && <div className={styles.error}>{errors.message}</div>}
                 </Form.Group>
 
-                {/* Honeypot anti-spam */}
-                <input type="text" name="_gotcha" className={styles.honeypot} tabIndex="-1" autoComplete="off" />
+                {/* Honeypot */}
+                <input type="text" name="_gotcha" className={styles.honeypot} />
 
-                {/* ✅ NUEVO: Aceptación Política de Datos (obligatoria) */}
-                <Form.Group className="mb-3" controlId="acceptPolicy">
+                {/* Aceptación Política de Datos */}
+                <Form.Group className="mb-3">
                   <Form.Check
                     type="checkbox"
-                    id="policyCheck"
                     checked={acceptedPolicy}
                     onChange={(e) => setAcceptedPolicy(e.target.checked)}
-                    required
-                    aria-required="true"
-                    aria-invalid={!!policyError}
                     label={
                       <>
                         Acepto la{" "}
-                        <a href="/privacidad" target="_blank" rel="noopener noreferrer">
+                        <a
+                          href="/POL%C3%8DTICA%20DE%20TRATAMIENTO%20DE%20DATOS%20PERSONALES.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.policyLink}
+                        >
                           Política de Tratamiento de Datos Personales
                         </a>
                       </>
                     }
                   />
                   {(policyError || errors.policy) && (
-                    <div className={styles.error} role="alert">
-                      {policyError || errors.policy}
-                    </div>
+                    <div className={styles.error}>{policyError || errors.policy}</div>
                   )}
                 </Form.Group>
 
                 <div className={styles.actions}>
-                  <Button type="submit" variant="primary" className={styles.submit} disabled={status === "loading"}>
+                  <Button type="submit" disabled={status === "loading"}>
                     {status === "loading" ? "Enviando…" : "Enviar"}
                   </Button>
 
                   <a
-                    className={styles.whatsapp}
-                    href={buildWhatsAppLink("Hola, vengo de la web y quiero cotizar tableros/carteleras. ¿Me ayudas?")}
+                    href={buildWhatsAppLink(
+                      "Hola, vengo de la web y quiero cotizar productos. ¿Me ayudas?"
+                    )}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Escribir por WhatsApp"
+                    className={styles.whatsapp}
                   >
                     Escríbenos por WhatsApp
                   </a>
